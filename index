@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+ 
+<head>
+<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=Edge">
+<meta name="viewport" content="width=device-width">
+ 
+<title>楽譜のある曲いちらん</title>
+ 
+<style>
+table {
+  border-collapse: collapse;
+  margin: 0 auto;
+  padding: 0;
+  width: 650px;
+　box-shadow: 0 0 15px -6px #00000073;
+}
+
+table tr {
+  background-color: #fff;
+}
+    
+table tbody tr:hover{
+  background-color: #fffae9;
+}
+    
+table th,
+table td {
+  padding: .35em 1em;
+  border-bottom: 1px solid #eee;
+}
+table thead th {
+    font-size: .85em;
+    padding: 1em;
+}
+table thead tr{
+  background-color: #FFC107;
+  color:#fff;
+}
+table tbody th {
+  text-align: left;
+  font-size: .8em;
+}
+.txt{
+   text-align: left;
+   font-size: .75em;
+}
+.price{
+  text-align: right;
+  color: #000;
+  font-weight: bold;
+}
+h1 {
+  text-align:  center;
+  font-size: 2.4em;
+  color: #fff;
+  text-shadow: 0 1px 0 #ccc, 0 3px 0 #ccc, 0 4px 10px rgba(0, 0, 0, .2);
+}
+@media screen and (max-width: 600px) {
+  
+  table{width: 100%;}
+}
+    
+table td.id {
+    width: 4rem;
+}
+ 
+table td.title {
+    width: 20rem;
+}
+ 
+table td.title.lvl2 {
+    padding-left: 2rem;
+}
+table td.title.lvl3 {
+    padding-left: 4rem;
+}
+ 
+table td.design,
+table td.test {
+    width: 8rem;
+}
+
+</style>
+</head>
+ 
+ 
+ 
+<body>
+    
+
+    <h1>楽譜のある曲リスト</h1>
+
+<div id="app">
+<table>
+    <thead>
+        <tr>
+            <th>日付</th>
+            <th>曲名</th>
+            <th>音源</th>
+
+        </tr>
+    </thead>
+    <tbody>
+        <template v-for="item in info">
+            <tr>
+                <td class="id">{{item.id | moment}}</td>
+                <td class="title lvl1" v-if="item.title_lv1">{{item.title_lv1}}</td>
+                <td class="title lvl2" v-if="item.title_lv2">{{item.title_lv2}}</td>
+                <td class="title lvl3" v-if="item.title_lv3">{{item.title_lv3}}</td>
+                <td class="design">
+                    <a :href="item.design_url" target="_blank" v-if="item.design_date">{{item.design_date}}</a>
+                </td>
+
+            </tr>
+        </template>
+    </tbody>
+</table>
+</div>
+ 
+ 
+<script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/vue-good-table@2.16.3/dist/vue-good-table.css" rel='stylesheet'>
+<script src="https://cdn.jsdelivr.net/npm/vue-good-table@2.16.3/dist/vue-good-table.js"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+ 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.1/moment-with-locales.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.21/moment-timezone.min.js"></script>
+ 
+<script type="text/javascript">
+    Vue.use(window.vueGoodTable.default);
+    
+new Vue({
+    el: '#app',
+    data () {
+        return {
+            info: null
+        }
+    },
+    mounted () {
+        axios
+            .get('https://script.google.com/macros/s/AKfycbySBnRAW6a_GGbIqdxPiJugjQr3cZcAwHxI1gjmI9GiW7DrqhA5/exec')
+            .then(response => {
+                response.data.shift();//スプレッドシートの1行目は日本語の列名だから除く
+                this.info = response.data
+            })
+    },
+    filters: {//日付をフォーマットする
+        moment: function (date) {
+            return  moment(date).format('M/D');
+        }
+    }
+})
+</script>
+ 
+</body>
+</html>
